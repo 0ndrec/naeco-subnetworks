@@ -114,7 +114,6 @@ start_nodes() {
     for ((i=1; i<=num_nodes; i++)); do
         if [ -f "docker-compose$i.yaml" ]; then
             docker-compose -f docker-compose$i.yaml up -d >> ocean.log 2>&1
-            tail -n 5 ocean.log
             if [ $? -ne 0 ]; then
                 echo -e "Node $i failed to start. Check ocean.log for details."
             else
