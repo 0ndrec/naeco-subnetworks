@@ -136,7 +136,7 @@ check_log_compose() {
     read num_node
 
     if [ -f "docker-compose$num_node.yaml" ]; then
-        docker-compose -f docker-compose$num_node.yaml logs -f >> ocean.log 2>&1
+        docker-compose -f docker-compose$num_node.yaml logs -f 
     else
         echo -e "docker-compose$num_node.yaml not found. Skipping."
     fi
