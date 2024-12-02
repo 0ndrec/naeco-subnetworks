@@ -1,0 +1,11 @@
+{
+    "23294": {
+        "rpc": "https://sapphire.oasis.io",
+        "fallbackRPCs": [
+            "https://1rpc.io/oasis/sapphire"
+        ],
+        "chainId": 23294,
+        "network": "sapphire",
+        "chunkSize": 100
+    }
+}
