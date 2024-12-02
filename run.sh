@@ -96,7 +96,7 @@ install_nodes() {
     current_dir=$(pwd)
     (crontab -l 2>/dev/null | grep -v "req.py"; echo "0 * * * * python3 $current_dir/req.py $ip_address $current_dir") | crontab -
 
-    echo -e "Node installation complete."
+    echo -e "Compose build complete."
     read -p "Press Enter to return to the main menu..."
 }
 
@@ -123,7 +123,7 @@ start_nodes() {
         else
             echo -e "docker-compose$i.yaml not found. Skipping."
         fi
-        sleep 5
+        sleep 2
     done
 
 
@@ -179,6 +179,8 @@ clear_all_nodes() {
     for volume in $volumes; do
         docker volume rm $volume
     done
+
+    rm -rf docker-compose*
 }
 
 

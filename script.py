@@ -54,9 +54,10 @@ def create_ocean_node_compose(wallet, i, ip_address, count_network):
           - "{6002 + i}:{6002 + i}"
         environment:
           PRIVATE_KEY: '{wallet['private_key']}'
-          DB_URL: f'http://typesense:{8108 + i}/?apiKey={typesense_api_key}'
+          DB_URL: 'http://typesense:{8108 + i}/?apiKey={typesense_api_key}'
           IPFS_GATEWAY: 'https://ipfs.io/'
           ARWEAVE_GATEWAY: 'https://arweave.net/'
+          NDEXER_INTERVAL: '5000'
           INTERFACES: '["HTTP","P2P"]'
           ALLOWED_ADMINS: '["{wallet['address']}"]'
           HTTP_API_PORT: '{http_api_port}'
