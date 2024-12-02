@@ -33,8 +33,8 @@ def create_ocean_node_compose(wallet, i, ip_address, count_network):
     http_api_port = 2002 + i
     p2p_tcp_port = 3002 + i
     p2p_ws_port = 4002 + i
-    typesense_api_key = 'inTheBestDkNodes'
-    admin_password = 'DkNodes'
+    typesense_api_key = 'key_new'
+    admin_password = 'password_new'
 
     # Определяем номер сети
     network_index = (i // count_network) + 1
@@ -46,11 +46,6 @@ def create_ocean_node_compose(wallet, i, ip_address, count_network):
         pull_policy: always
         container_name: ocean-node-{i + 1}
         restart: on-failure
-        deploy:
-            resources:
-                limits:
-                    memory: '700m'
-        oom_kill_disable: true
         ports:
           - "{http_api_port}:{http_api_port}"
           - "{p2p_tcp_port}:{p2p_tcp_port}"
@@ -59,7 +54,7 @@ def create_ocean_node_compose(wallet, i, ip_address, count_network):
           - "{6002 + i}:{6002 + i}"
         environment:
           PRIVATE_KEY: '{wallet['private_key']}'
-          DB_URL: 'http://typesense:{8108 + i}/?apiKey=inTheBestDkNodes'
+          DB_URL: f'http://typesense:{8108 + i}/?apiKey={typesense_api_key}'
           IPFS_GATEWAY: 'https://ipfs.io/'
           ARWEAVE_GATEWAY: 'https://arweave.net/'
           INTERFACES: '["HTTP","P2P"]'
@@ -103,14 +98,18 @@ def create_ocean_node_compose(wallet, i, ip_address, count_network):
 
     # Добавляем определение всех сетей с драйвером bridge
     for net_index in range(1, (i // count_network) + 2):
-        docker_compose_template += f"""
+        try:
+            docker_compose_template += f"""
       ocean_network_{net_index}:
         driver: bridge
         ipam:
           config:
             - subnet: '192.168.{net_index}.0/24'
               gateway: '192.168.{net_index}.1'
-    """
+            """
+        except Exception as e:
+            print(f"Error creating network {net_index}: {e}")
+            sys.exit(1)
 
     save_docker_compose_file(docker_compose_template, i)
     print(f"Generated docker-compose{i + 1}.yaml for ocean-node-{i + 1}")
