@@ -180,6 +180,11 @@ clear_all_nodes() {
     done
 
     rm -rf docker-compose*
+
+    docker system prune -a --volumes -f
+
+    echo -e "All containers, images, networks, and volumes have been removed."
+    read -p "Press Enter to return to the main menu..."
 }
 
 
