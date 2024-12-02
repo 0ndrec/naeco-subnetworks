@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 get_ip_address() {
     ip_address=$(hostname -I | awk '{print $1}')
     if [[ -z "$ip_address" ]]; then
