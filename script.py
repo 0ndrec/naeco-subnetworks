@@ -39,6 +39,9 @@ def create_ocean_node_compose(wallet, i, ip_address, count_network):
     # Определяем номер сети
     network_index = (i // count_network) + 1
 
+    typesense_port_index = (i % count_network)
+
+
     docker_compose_template = f"""
     services:
       ocean-node{i + 1}:
@@ -54,16 +57,22 @@ def create_ocean_node_compose(wallet, i, ip_address, count_network):
           - "{6002 + i}:{6002 + i}"
         environment:
           PRIVATE_KEY: '{wallet['private_key']}'
-          DB_URL: 'http://typesense:{8108 + i}/?apiKey={typesense_api_key}'
+          DB_URL: 'http://typesense:{8108 + typesense_port_index}/?apiKey={typesense_api_key}'
           IPFS_GATEWAY: 'https://ipfs.io/'
           ARWEAVE_GATEWAY: 'https://arweave.net/'
-          NDEXER_INTERVAL: '5000'
+          INDEXER_INTERVAL: '5000'
           INTERFACES: '["HTTP","P2P"]'
           ALLOWED_ADMINS: '["{wallet['address']}"]'
           HTTP_API_PORT: '{http_api_port}'
           P2P_ENABLE_IPV4: 'true'
+          P2P_ENABLE_IPV6 : 'true'
+          P2P_dhtMaxInboundStreams: '900'
+          P2P_mDNSInterval: '2000'
+          P2P_connectionsMaxParallelDials: '300'
+          P2P_MAX_CONNECTIONS: '500'
           P2P_ipV4BindAddress: '0.0.0.0'
           P2P_ipV4BindTcpPort: '{p2p_tcp_port}'
+          P2P_ipV6BindTcpPort: '{p2p_tcp_port}'
           P2P_ipV4BindWsPort: '{p2p_ws_port}'
           P2P_ANNOUNCE_ADDRESSES: '["/ip4/{ip_address}/tcp/{p2p_tcp_port}", "/ip4/{ip_address}/ws/tcp/{p2p_ws_port}"]'
         networks:
@@ -76,6 +85,7 @@ def create_ocean_node_compose(wallet, i, ip_address, count_network):
       typesense-{i + 1}:
         image: typesense/typesense:26.0
         container_name: typesense-{i + 1}
+        restart: always
         ports:
           - "{8108 + i}:{8108 + i}"
         environment:
@@ -99,18 +109,14 @@ def create_ocean_node_compose(wallet, i, ip_address, count_network):
 
     # Добавляем определение всех сетей с драйвером bridge
     for net_index in range(1, (i // count_network) + 2):
-        try:
-            docker_compose_template += f"""
+        docker_compose_template += f"""
       ocean_network_{net_index}:
         driver: bridge
         ipam:
           config:
-            - subnet: '192.168.{net_index}.0/24'
-              gateway: '192.168.{net_index}.1'
+            - subnet: f'192.168.{net_index}.0/24'
+              gateway: f'192.168.{net_index}.1'
             """
-        except Exception as e:
-            print(f"Error creating network {net_index}: {e}")
-            sys.exit(1)
 
     save_docker_compose_file(docker_compose_template, i)
     print(f"Generated docker-compose{i + 1}.yaml for ocean-node-{i + 1}")
