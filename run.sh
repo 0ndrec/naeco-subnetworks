@@ -179,6 +179,8 @@ clear_all_nodes() {
         docker volume rm $volume
     done
 
+    docker network prune -f
+
     rm -rf docker-compose*
 
     docker system prune -a --volumes -f
