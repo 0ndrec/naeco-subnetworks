@@ -185,6 +185,9 @@ clear_all_nodes() {
 
     docker system prune -a --volumes -f
 
+    sudo systemctl restart docker
+
+
     echo -e "All containers, images, networks, and volumes have been removed."
     read -p "Press Enter to return to the main menu..."
 }
