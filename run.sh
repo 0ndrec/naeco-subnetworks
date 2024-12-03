@@ -179,7 +179,7 @@ clear_all_nodes() {
         docker volume rm $volume
     done
 
-    docker network prune -f
+    docker network ls --filter type=custom -q | xargs -r docker network rm
 
     rm -rf docker-compose*
 
