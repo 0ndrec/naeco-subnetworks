@@ -39,7 +39,9 @@ def create_ocean_node_compose(wallet, i, ip_address, count_network):
     # Определяем номер сети
     network_index = (i // count_network) + 1
 
-    typesense_port_index = (i % count_network)
+    if (i % count_network) == 0:
+        # Calculate a port for typesense
+        typesense_port_index = (i // count_network)
 
 
     docker_compose_template = f"""
