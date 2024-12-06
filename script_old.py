@@ -22,7 +22,7 @@ def read_wallets_from_txt(path) -> list[dict]:
 def save_wallets_to_json(wallets):
     with open("wallets.json", "w") as json_file:
         json.dump(wallets, json_file, indent=4)
-    print("Wallets saved to wallets.json")
+    print("Generated wallets saved to wallets.json")
 
 
 rpcs = {}
@@ -33,8 +33,8 @@ def create_ocean_node_compose(wallet, i, ip_address, count_network):
     http_api_port = 2002 + i
     p2p_tcp_port = 3002 + i
     p2p_ws_port = 4002 + i
-    typesense_api_key = 'key_new'
-    admin_password = 'password_new'
+    typesense_api_key = 'inTheBestDkNodes'
+    admin_password = 'DkNodes'
 
     # Определяем номер сети
     network_index = (i // count_network) + 1
@@ -129,12 +129,10 @@ def main():
     ip_address = sys.argv[1]
     num_files = int(sys.argv[2])
     count_network = int(sys.argv[3])
-
     if num_files:
         wallets = generate_wallets(num_files)
-    else:
+    else :
         wallets = read_wallets_from_txt("wallets.txt")
-        print(f'Found {len(wallets)} wallets')
     save_wallets_to_json(wallets)
 
     for i, wallet in enumerate(wallets, start=0):
